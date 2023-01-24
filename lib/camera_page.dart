@@ -58,7 +58,7 @@ class _CameraPageState extends State<CameraPage> {
           padding: const EdgeInsets.all(8.0),
           child: Center(
             child: SizedBox(
-              height: 400,
+              height: 600,
               width: 400,
               child: CameraPreview(controller),
             ),
@@ -72,12 +72,13 @@ class _CameraPageState extends State<CameraPage> {
               File imageFile = await File(pictureFile!.path);
               String path = imageFile.path;
               print(path);
-              // object = await
-              uploadImage("image",imageFile );
-              print('here is the');
+              String object2 = await uploadImage("image",imageFile );
               // String fileFormat = imageFile.path.split('.').last;
               // print(imageFile.path);
-              setState(() {});
+              setState(() {
+                object = object2;
+                print(object);
+              });
             },
             child: const Text('Identify'),
           ),
@@ -86,7 +87,7 @@ class _CameraPageState extends State<CameraPage> {
         // Image.file(File(pictureFile!.path)),
           // result of AI
           Text(
-            'X $object',
+            '$object',
             // 'The object is: $object',
             style: TextStyle(fontSize: 35, backgroundColor: Colors.yellow),
           )
@@ -96,28 +97,27 @@ class _CameraPageState extends State<CameraPage> {
 }
 
 
-Future<void> uploadImage(String title, File file) async{
+Future<String> uploadImage(String title, File file) async{
   // var request = http.MultipartRequest("POST",Uri.parse("http://127.0.0.1:8000/objects/"));
   //
   // request.fields['title'] = "objectImage";
   // request.headers['Authorization'] = "";
   // var picture = http.MultipartFile.fromBytes('image', (await load(path)).buffer.asUint8List(),
   //     filename: 'testimage.jpg');
-  // print('third');
   // request.files.add(picture);
   // var response = await request.send() ;
-  // print('fourth');
+
   // var responseData = await response.stream.toBytes();
-  // print('fifth');
+
   // var result = String.fromCharCodes(responseData);
-  // print('sixth');
+
   // print(result);
 
   // final response = await http.post(
   //   Uri.parse("http://127.0.0.1:8000/objects/"),
   //
   //   body: {
-  //     'photo': file != null ? 'data:image/png;base64,' + base64Encode(file.readAsBytesSync()) : '',
+  //     // 'photo': file != null ? 'data:image/png;base64,' + base64Encode(file.readAsBytesSync()) : 'dd',
   //   },
   // );
   // final responseJson = json.decode(response.body);
@@ -125,12 +125,14 @@ Future<void> uploadImage(String title, File file) async{
 
   Response response;
   var dio = Dio();
-
-  print('sssssssssssss1');
-  response = await dio.post("http://10.0.2.2:8000/objects/", data: {'id': 12, 'name': 'wendu'});
+  
+  response = await dio.post("http://192.168.132.254:8000/objects/", data: {
+    // 'id': 12, 'name': 'wendu',
+    'photo': file != null ? 'data:image/jpg;base64,' + base64Encode(file.readAsBytesSync()) : '34',
+  });
   print('sssssssssssss2');
-  print(response.data.toString());
+  // print(response.data['verdict']);
 
-  // return result;
+  return response.data['verdict'];
 
 }
